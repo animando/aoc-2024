@@ -1,4 +1,4 @@
-import { getFileLines, getInputFilePath } from 'utils';
+import { getFileLines } from 'utils';
 
 type Map = string[][];
 enum Direction {
@@ -8,9 +8,7 @@ enum Direction {
   RIGHT = 'right',
 }
 
-const lines = getFileLines(getInputFilePath('day-6.txt')).map((line) =>
-  line.split(''),
-);
+const lines = getFileLines('day-6.txt').map((line) => line.split(''));
 
 const OBSTACLE = '#';
 const VISITED = 'X';

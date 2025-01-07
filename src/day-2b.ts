@@ -1,4 +1,4 @@
-import { getFileLines, getInputFilePath } from 'utils';
+import { getFileLines } from 'utils';
 
 type Report = number[];
 
@@ -6,8 +6,8 @@ type SafetyResult = {
   safe: boolean;
   increasing: boolean;
 };
-const reports: Report[] = getFileLines(getInputFilePath('day-2.txt')).map(
-  (line) => line.split(' ').map(Number),
+const reports: Report[] = getFileLines('day-2.txt').map((line) =>
+  line.split(' ').map(Number),
 );
 
 const checkValues = (value: number, nextValue: number, increasing: boolean) => {

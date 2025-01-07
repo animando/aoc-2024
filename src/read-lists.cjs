@@ -1,10 +1,10 @@
-const { getFileLines, getInputFilePath } = require('./utils.cjs');
+const { getFileLines } = require('./utils.cjs');
 
 const readFile = () => {
   const listOne = [];
   const listTwo = [];
 
-  const lines = getFileLines(getInputFilePath('day-1.txt'));
+  const lines = getFileLines('day-1.txt');
 
   lines.forEach((line) => {
     const numbers = line.split(/\W+/);

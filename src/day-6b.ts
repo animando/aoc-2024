@@ -1,21 +1,23 @@
-import { getFileLines, getInputFilePath } from 'utils';
+import { getFileLines } from 'utils';
+
 type Map = string[][];
+
 enum Direction {
   UP = 'up',
   DOWN = 'down',
   LEFT = 'left',
   RIGHT = 'right',
 }
+
 type HistoryEntry = {
   x: number;
   y: number;
   direction: Direction;
 };
+
 type History = HistoryEntry[];
 
-const lines = getFileLines(getInputFilePath('day-6b-sample.txt')).map((line) =>
-  line.split(''),
-);
+const lines = getFileLines('day-6b-sample.txt').map((line) => line.split(''));
 
 const OBSTACLE = '#';
 const VISITED = 'X';

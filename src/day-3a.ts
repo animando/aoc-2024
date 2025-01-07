@@ -1,6 +1,6 @@
-import { getFileLines, getInputFilePath, sum } from 'utils';
+import { getFileLines, sum } from 'utils';
 
-const lines = getFileLines(getInputFilePath('day-3.txt'));
+const lines = getFileLines('day-3.txt');
 
 const regex = /mul\((\d{1,3}),(\d{1,3})\)/g;
 

@@ -1,6 +1,6 @@
-import { getFileLines, getInputFilePath, sum } from 'utils';
+import { getFileLines, sum } from 'utils';
 
-const lines = getFileLines(getInputFilePath('day-5.txt'));
+const lines = getFileLines('day-5.txt');
 
 type ParsedInput = { rules: string[]; updates: string[] };
 

@@ -1,8 +1,6 @@
-import { getFileLines, getInputFilePath } from 'utils';
+import { getFileLines } from 'utils';
 
-const lines = getFileLines(getInputFilePath('day-4.txt')).map((line) =>
-  line.split(''),
-);
+const lines = getFileLines('day-4.txt').map((line) => line.split(''));
 
 const searchInLetters = (wordCoords: number[][]) => {
   const word = wordCoords.reduce((acc, [y, x]) => {
