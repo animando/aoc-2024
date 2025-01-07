@@ -10,7 +10,7 @@ const getFileLines = (fileName) => {
 };
 
 const getInputFilePath = (filename) => {
-  return path.join(__dirname, '..', 'input', filename);
+  return path.join(__dirname, '..', '..', 'input', filename);
 };
 
 module.exports = {
