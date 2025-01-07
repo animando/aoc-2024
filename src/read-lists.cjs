@@ -1,7 +1,6 @@
 const { getFileLines, getInputFilePath } = require('./utils.cjs');
 
 const readFile = () => {
-
   const listOne = [];
   const listTwo = [];
 
@@ -9,13 +8,12 @@ const readFile = () => {
 
   lines.forEach((line) => {
     const numbers = line.split(/\W+/);
-    listOne.push(Number(numbers[0]))
-    listTwo.push(Number(numbers[1]))
-  })
-  return [listOne, listTwo]
-}
-
+    listOne.push(Number(numbers[0]));
+    listTwo.push(Number(numbers[1]));
+  });
+  return [listOne, listTwo];
+};
 
 module.exports = {
-  readFile
-}
+  readFile,
+};
