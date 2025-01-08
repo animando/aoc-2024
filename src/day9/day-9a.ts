@@ -8,7 +8,7 @@ import {
   createDiskMapFromFile,
 } from './common.js';
 
-const inputFile = 'day-9.txt';
+const inputFile = 'day-9-sample.txt';
 
 const compact = (diskMap: DiskMap): DiskMap => {
   let reverseIdx = diskMap.length - 1;

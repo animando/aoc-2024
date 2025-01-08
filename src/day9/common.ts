@@ -1,8 +1,8 @@
 import { getFileLines } from 'utils';
 
 export enum BlockType {
-  FILE,
-  SPACE,
+  FILE = 'file',
+  SPACE = 'space',
 }
 
 export type FileBlock = {
@@ -74,7 +74,7 @@ export const computeChecksum = (diskMap: DiskMap): number => {
   return diskMap.reduce(
     (acc, block) => {
       if (block.type === BlockType.SPACE) {
-        return acc;
+        return { checksum: acc.checksum, idx: acc.idx + block.length };
       }
       let blockSum = 0;
       for (let i = 0; i < block.length; i++) {
