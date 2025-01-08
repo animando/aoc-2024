@@ -1,95 +1,136 @@
 import { getFileLines } from 'utils';
 
-const inputFile = 'day-9-sample.txt';
+const inputFile = 'day-9.txt';
 
-type Block = {
+type FileBlock = {
+  type: 'file';
   fileId: number;
   length: number;
 };
-type BlockMap = Block[];
+type SpaceBlock = {
+  type: 'space';
+  length: number;
+};
+type Block = FileBlock | SpaceBlock;
+type DiskMap = Block[];
 
-const createFileEntry = (length: number, fileId: number): string[] => {
-  return new Array(length).fill(fileId).map(String);
-};
-const createSpaceEntry = (length: number): string[] => {
-  return new Array(length).fill('.');
-};
-const createBlockmap = (diskmap: number[]) => {
-  return diskmap
-    .reduce<string[]>((acc, entry, idx) => {
-      if (idx % 2 === 0) {
-        const fileId = idx / 2;
-        acc.push(...createFileEntry(entry, fileId));
-      } else {
-        acc.push(...createSpaceEntry(entry));
-      }
-      return acc;
-    }, [])
-    .join('');
+const createFileEntry = (length: number, fileId: number): FileBlock => {
+  return {
+    type: 'file',
+    fileId,
+    length,
+  };
 };
 
-const compactRec = (blockmap: string): string => {
-  const lastChar = blockmap.charAt(blockmap.length - 1);
-  if (blockmap.length === 0) {
-    return '';
-  }
-  if (blockmap.charAt(0) !== '.') {
-    const newBlockMap = blockmap.substring(1);
-    return `${blockmap[0]}${compactRec(newBlockMap)}`;
-  } else if (lastChar === '.') {
-    return `${compactRec(blockmap.substring(0, blockmap.length - 1))}.`;
-  } else {
-    const newBlockMap = blockmap.substring(1, blockmap.length - 1);
-    return `${lastChar}${compactRec(newBlockMap)}.`;
-  }
+const createSpaceEntry = (length: number): SpaceBlock => {
+  return {
+    type: 'space',
+    length,
+  };
 };
 
-const compact = (blockmap: string): string => {
-  return compactRec(blockmap);
-};
-
-const compact2 = (blockmap: string): string => {
-  console.log(blockmap.length);
-  let solution = '';
-  let appendSpace = '';
-  let reverseIdx = blockmap.length - 1;
-  for (let i = 0; i < reverseIdx + 1; i++) {
-    const char = blockmap.charAt(i);
-    const finalChar = blockmap.charAt(reverseIdx);
-    if (char === '.') {
-      if (finalChar === '.') {
-        appendSpace += '.';
-        reverseIdx--;
-        i--;
-      } else {
-        reverseIdx--;
-        appendSpace += '.';
-        solution += finalChar;
-      }
+const createDiskMap = (diskmap: number[]): DiskMap => {
+  return diskmap.reduce<DiskMap>((acc, entry, idx) => {
+    if (idx % 2 === 0) {
+      const fileId = idx / 2;
+      acc.push(createFileEntry(entry, fileId));
     } else {
-      solution += char;
+      acc.push(createSpaceEntry(entry));
     }
-  }
-  return solution + appendSpace;
+    return acc;
+  }, []);
 };
 
-const computeChecksum = (blockmap: string): number => {
-  return blockmap.split('').reduce((acc, value, idx) => {
-    if (value === '.') {
-      return acc;
+const appendOrReplaceFileBlock = (block: FileBlock, diskMap: DiskMap) => {
+  const headBlock = diskMap[diskMap.length - 1];
+
+  if (
+    headBlock &&
+    headBlock.type === 'file' &&
+    headBlock.fileId === block.fileId
+  ) {
+    diskMap[diskMap.length - 1] = createFileEntry(
+      headBlock.length + block.length,
+      block.fileId,
+    );
+  } else {
+    diskMap.push(block);
+  }
+};
+
+const compact = (diskMap: DiskMap): DiskMap => {
+  let reverseIdx = diskMap.length - 1;
+  const compacted: DiskMap = [];
+  let endSpace: number = 0;
+
+  for (let idx = 0; reverseIdx >= idx; idx++) {
+    const block = diskMap[idx];
+
+    if (block.type === 'file') {
+      appendOrReplaceFileBlock(block, compacted);
+    } else {
+      let remainingSpace = block.length;
+      while (remainingSpace > 0) {
+        const lastBlock = diskMap[reverseIdx];
+        if (lastBlock.type === 'space') {
+          endSpace += lastBlock.length;
+          reverseIdx--;
+        } else {
+          if (lastBlock.length <= remainingSpace) {
+            compacted.push(lastBlock);
+            reverseIdx--;
+            remainingSpace -= lastBlock.length;
+            endSpace += lastBlock.length;
+          } else {
+            const split1 = createFileEntry(remainingSpace, lastBlock.fileId);
+            const split2 = createFileEntry(
+              lastBlock.length - remainingSpace,
+              lastBlock.fileId,
+            );
+            appendOrReplaceFileBlock(split1, compacted);
+            diskMap[reverseIdx] = split2;
+            remainingSpace = 0;
+            endSpace += split1.length;
+          }
+        }
+      }
     }
-    return acc + Number(value) * idx;
-  }, 0);
+  }
+
+  return [...compacted, createSpaceEntry(endSpace)];
+};
+
+const computeChecksum = (diskMap: DiskMap): number => {
+  return diskMap.reduce(
+    (acc, block) => {
+      if (block.type === 'space') {
+        return acc;
+      }
+      let blockSum = 0;
+      for (let i = 0; i < block.length; i++) {
+        blockSum += block.fileId * (i + acc.idx);
+      }
+
+      return {
+        checksum: acc.checksum + blockSum,
+        idx: acc.idx + block.length,
+      };
+    },
+    { checksum: 0, idx: 0 },
+  ).checksum;
 };
 
 (() => {
-  const diskmap = getFileLines(inputFile)[0].split('').map(Number);
+  const rawDiskMap = getFileLines(inputFile)[0].split('').map(Number);
 
-  const blockmap = createBlockmap(diskmap);
+  const diskMap = createDiskMap(rawDiskMap);
 
-  const compacted = compact2(blockmap);
+  const compacted = compact(diskMap);
 
   const checksum = computeChecksum(compacted);
 
-  console.log({ 'blockmap  ': blockmap, 'compacted ': compacted, checksum });
+  console.log({ checksum });
 })();
+
+// 1928
+// 6225730762521
