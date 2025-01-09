@@ -1,8 +1,9 @@
-import { getSortedLists } from 'get-sorted-lists';
-
 import { sum } from 'utils';
+import { getSortedLists } from './get-sorted-lists.js';
 
-const [sortedOne, sortedTwo] = getSortedLists();
+const fileName = 'day-1.txt';
+
+const [sortedOne, sortedTwo] = getSortedLists(fileName);
 
 const similarity = sortedOne
   .map((value) => {
